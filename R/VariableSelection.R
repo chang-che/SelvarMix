@@ -58,9 +58,6 @@ VariableSelection<-
     
     arg.grid <- matrix(0, OutputVector.size, 2)  
     arg.grid <- as.matrix(expand.grid(1:nbCluster.size, 1:listModels.size))
-    colnames(arg.grid) <- NULL
-    arg.grid.list <- list(); arg.grid.list <- as.list(data.frame(t(arg.grid)))
-    
     ## si on est sous windows
     if(Sys.info()["sysname"] == "Windows")
     {
@@ -73,31 +70,31 @@ VariableSelection<-
                           "criterion",
                           "supervised",
                           "knownlabels",
+                          "mixmodLearn",
                           "mixmodCluster",
-                          "mixmodLearn")
+                          "mixmodStrategy")
+      #clusterEvalQ(cl, require(Rmixmod))
       clusterExport(cl=cl, varlist = common.objects, envir = environment())
-      junk <- parLapply(cl = cl,  
-                        X = arg.grid.list, 
-                        fun = wrapper.selectVar)
+      junk <- parApply(cl = cl,  
+                        X = arg.grid,
+                        MARGIN = 1,
+                        FUN = wrapper.selectVar)
       stopCluster(cl)
       
     }
     else
-      junk <- mclapply(X = arg.grid.list, 
+      junk <- mclapply(X = as.list(data.frame(t(arg.grid))),
                        FUN = wrapper.selectVar,
                        mc.cores = nbCores,
                        mc.silent = FALSE,
                        mc.preschedule = TRUE,
                        mc.cleanup = TRUE)
     
-    
-    ## je vais compter le nombre d'échecs 
     nb.fails <- 0 
     for(idx in 1:OutputVector.size)
       if(class(junk[[idx]]) == "try-error")
         nb.fails <- nb.fails + 1
     
-    ##Préparer le stockage
     VariableSelectRes <-  vector(length = (OutputVector.size - nb.fails), mode ="list")
     
     idx <- 1

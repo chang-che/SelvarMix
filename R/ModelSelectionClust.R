@@ -8,9 +8,6 @@ ModelSelectionClust <- function(VariableSelectRes,
                                 nbCores)
 {
   
-  
-  
-  ## je récupère le nombre d'éléments de la liste
   mylist.size <- length(VariableSelectRes)
   if(mylist.size==1)
     junk <- try(rcppCrit(data, 
@@ -34,7 +31,6 @@ ModelSelectionClust <- function(VariableSelectRes,
     if(mylist.size < nbCores) 
       nbCores <- mylist.size
       
-    ## si on est sous windows 
     if(Sys.info()["sysname"] == "Windows")
     {
       cl <- makeCluster(nbCores)

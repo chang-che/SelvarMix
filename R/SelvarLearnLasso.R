@@ -127,17 +127,12 @@ SelvarLearnLasso <-
     }
     
     
-    ## on est supervisé donc on initialiser supervised à TRUE.
     supervised <- TRUE
-    ## On ne fournit pas ici le paramètre nbCluster  
     nbCluster <- as.integer(max(knownlabels))
-    ## on en a qu'un seul critère ici c'est : BIC
     criterion <- "BIC" 
-    ## penser au cas où l'utilisateur introduit une liste de matrices de données (une matrice par groupe)   
     data <- as.matrix(data)
     n <- as.integer(nrow(data))
     p <- as.integer(ncol(data))
-    ## on n'en a qu'un seul ordre des variables  
     OrderVariable <- rep(NA, p) 
     dataStand <- scale(data, TRUE, TRUE)
     print("............... start  variable  ranking .................................... ")
@@ -153,14 +148,14 @@ SelvarLearnLasso <-
                                            hybrid.size,
                                            supervised,
                                            knownlabels,
-                                           nbCores)## ici les deux derniers arguements ne jouent qu'un rôle de création d'objet c++
+                                           nbCores)
     print(" ...... model selection with BIC criterion......")
     bestModel <- ModelSelectionClust(VariableSelectRes,
                                      data,
                                      regModel,
                                      indepModel,
                                      nbCores)
-    ## ajout du calcul du taux de mauvais classement une fois le meilleur modèle est sélectionné
+    
     if(testing)
     {
       dataAux <- as.data.frame(data[,bestModel$S])

@@ -75,7 +75,6 @@ SelvarClustLasso <-
     
     # check models 
     if(missing(models)){
-      ##models <- mixmodGaussianModel(family="general", free.proportions=TRUE)  
       models <- mixmodGaussianModel(listModels = c("Gaussian_pk_L_C", 
                                                    "Gaussian_pk_Lk_C", 
                                                    "Gaussian_pk_L_Ck", 
@@ -119,8 +118,8 @@ SelvarClustLasso <-
     OrderVariable <- matrix(NA, nrow = length(nbCluster), ncol = p) 
     dataStand <- scale(data, TRUE, TRUE)
     print("............... start  variable  ranking .................................... ")
-    supervised <- FALSE ## c'est une initialisation qui ne sert qu'à créer l'objet CritClust en c++
-    knownlabels <- as.integer(1:n) ## une initilialisation qui ne sert qu'à créer l'objet CritClust en c++  (une autre solution à trouver !!!)
+    supervised <- FALSE 
+    knownlabels <- as.integer(1:n) 
     OrderVariable <- SortvarClust(dataStand, nbCluster, lambda, rho, nbCores)
     print("................. variable ranking .... done ................................ ")
     bestModel <- list()
@@ -135,7 +134,7 @@ SelvarClustLasso <-
                                              hybrid.size,
                                              supervised,
                                              knownlabels,
-                                             nbCores)## ici les deux derniers arguements ne jouent qu'un rôle de création d'objet c++
+                                             nbCores)
     
      if(criterion=="BIC"){
         print(" ..... model selection  with BIC criterion...... ")
