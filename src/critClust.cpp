@@ -24,7 +24,7 @@ List CritClust::ClustBestModel(vector<int> numExp)
   Function dataframe = base["data.frame"];
   Function RmixmodLearn = Rmixmod["mixmodLearn"];
   Function RmixmodCluster = Rmixmod["mixmodCluster"];
-  Function RmixmodStrategy = Rmixmod["mixmodStrategy"];
+  //Function RmixmodStrategy = Rmixmod["mixmodStrategy"];
   
   
   if(DA == false){
@@ -32,27 +32,28 @@ List CritClust::ClustBestModel(vector<int> numExp)
     for(int j = 0;  j < (int)numExp.size(); ++j)
     dataAux(_, j)  = data(_,numExp[j]-1);
     
-    S4 mixmodstrategy = RmixmodStrategy(Named("nbTry") = 2, 
-    Named("nbTryInInit") = 100, 
-    Named("nbIterationInInit") = 10);   
+    //S4 mixmodstrategy = RmixmodStrategy(Named("nbTry") = 2, 
+    //Named("nbTryInInit") = 100, 
+    //Named("nbIterationInInit") = 20);   
     
     S4 xem = RmixmodCluster(Named("data") = dataframe(dataAux),
     Named("nbCluster") = k,
     Named("models") = m,
-    Named("strategy") = mixmodstrategy,
+    //Named("strategy") = mixmodstrategy,
     Named("criterion") = crit);
     S4 bestResult = xem.slot("bestResult");
     return List::create(Named("criterionValue") = -as<double>(bestResult.slot("criterionValue")),
     Named("criterion") = bestResult.slot("criterion"),
-    Named("nbCluster") = bestResult.slot("nbCluster"),
+    Named("nbcluster") = bestResult.slot("nbCluster"),
     Named("model") = bestResult.slot("model"),
+    Named("parameters") = bestResult.slot("parameters"),
     Named("proba") = bestResult.slot("proba"),
-    Named("partition") = bestResult.slot("partition"));
+    Named("partition") = bestResult.slot("partition"),
+    Named("error") = bestResult.slot("error"));
     
   }
   else
   {
-    
     NumericMatrix dataAux(data.nrow(), numExp.size());
     for(int j = 0;  j < (int)numExp.size(); ++j)
     dataAux(_, j)  = data(_,numExp[j]-1);
@@ -64,17 +65,16 @@ List CritClust::ClustBestModel(vector<int> numExp)
     Named("knownLabels") = knownlabels,
     Named("models") = m,
     Named("criterion") = bic);
-    
-    
-    
     S4 bestResult = xem.slot("bestResult");
     NumericVector critvalues(bestResult.slot("criterionValue"));
     return List::create(Named("criterionValue") = -critvalues[0],
-    Named("model") = bestResult.slot("model"),
-    Named("proba") = 0, 
-    Named("criterion") = "BIC",
-    Named("nbCluster") = bestResult.slot("nbCluster"),
-    Named("partition") = bestResult.slot("partition"));
+                        Named("model") = bestResult.slot("model"),
+                        Named("proba") = 0, 
+                        Named("criterion") = "BIC",
+                        Named("parameters") = bestResult.slot("parameters"),
+                        Named("nbcluster") = bestResult.slot("nbCluster"),
+                        Named("partition") = bestResult.slot("partition"),
+                        Named("error") = bestResult.slot("error"));
   };
   
 };
